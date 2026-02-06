@@ -8,8 +8,18 @@ from .serializers import F1TeamSerializer
 @api_view(['POST'])
 def create_f1_team(request):
     if request.method == 'POST':
-        serializer = F1TeamSerializer(data=request.data)
+        data = request.data
+        
+        if F1Team.objects.filter(name=data.get('name')).exists():
+            return Response({"error": "Команда с таким именем уже существует!"}, 
+                          status=400)
+        
+        serializer = F1TeamSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            team = serializer.save()
+            return Response({
+                "status": "success",
+                "team_id": team.id,
+                "name": team.name
+            }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
