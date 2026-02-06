@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from f1_teams.views import create_f1_team  
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/f1/create/', create_f1_team, name='create_f1_team'),
 ]
